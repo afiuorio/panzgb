@@ -1,0 +1,3 @@
+[submodule "libpanzgb"]
+	path = libpanzgb
+	url = https://github.com/afiuorio/libpanzgb
