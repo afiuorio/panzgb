@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "panzgb.h"
+#include "libpanzgb/include/panzgb.h"
 
 #define NUM_OP_60HZ (GB_CLOCK / GB_SCREEN_REFRESH_RATE)
 
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
     SDL_Surface *surface =
         SDL_CreateRGBSurface(0, 160 * SCALE, 144 * SCALE, 32, 0, 0, 0, 0);
 
-    gameboy = newGameboy(argv[1]);
+    gameboy = newGameboy(argv[1], 1);
     if (!gameboy) {
         fprintf(stderr, "Error on memory allocation\n");
         exit(EXIT_FAILURE);
