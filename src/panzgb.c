@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "libpanzgb/include/panzgb.h"
+#include "panzgb.h"
 
 #define NUM_OP_60HZ (GB_CLOCK / GB_SCREEN_REFRESH_RATE)
 

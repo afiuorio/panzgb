@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{747B7A63-48E8-4661-805F-E60E3A9D673E}</ProjectGuid>
+    <ProjectGuid>{76AB20FB-89C4-4831-B876-293EBD7E7461}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -64,7 +64,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\panzone\devtools\SDL2-2.0.9\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -76,13 +75,11 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Users\panzone\devtools\SDL2-2.0.9\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -101,40 +98,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\panzone\devtools\SDL2-2.0.9\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SubSystem>Console</SubSystem>
-    </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>C:\Users\panzone\devtools\SDL2-2.0.9\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\Users\panzone\devtools\SDL2-2.0.9\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="libpanzgb\src\gb-memory.c" />
-    <ClCompile Include="libpanzgb\src\gb-opcodes-impl.c" />
-    <ClCompile Include="libpanzgb\src\gb-opcodes.c" />
-    <ClCompile Include="libpanzgb\src\gb-video.c" />
-    <ClCompile Include="libpanzgb\src\gc-imp.c" />
-    <ClCompile Include="libpanzgb\src\gc-interrupts.c" />
-    <ClCompile Include="libpanzgb\src\mbc1.c" />
-    <ClCompile Include="libpanzgb\src\mbc3.c" />
-    <ClCompile Include="panzgb.c" />
+    <ClCompile Include="src\gb-memory.c" />
+    <ClCompile Include="src\gb-opcodes-impl.c" />
+    <ClCompile Include="src\gb-opcodes.c" />
+    <ClCompile Include="src\gb-video.c" />
+    <ClCompile Include="src\gc-imp.c" />
+    <ClCompile Include="src\gc-interrupts.c" />
+    <ClCompile Include="src\mbc1.c" />
+    <ClCompile Include="src\mbc3.c" />
+    <ClCompile Include="src\panzgb.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="libpanzgb\include\panzgb.h" />
-    <ClInclude Include="libpanzgb\src\gb-impl.h" />
-    <ClInclude Include="libpanzgb\src\gb-opcode.h" />
-    <ClInclude Include="libpanzgb\src\panzgb.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".vscode\ipch\1505a1c996a3d813\mmap_address.bin" />
-    <None Include=".vscode\ipch\2ad7f7f7862a5382\mmap_address.bin" />
-    <None Include=".vscode\ipch\32080e7dd10fc51c\mmap_address.bin" />
-    <None Include=".vscode\ipch\9d71fa31510b6700\mmap_address.bin" />
-    <None Include=".vscode\ipch\b51fb7a35b1eaeb8\mmap_address.bin" />
-    <None Include=".vscode\ipch\dc81dd84217ab85e\mmap_address.bin" />
-    <None Include=".vscode\ipch\fb9efff85cb450c8\mmap_address.bin" />
+    <ClInclude Include="src\gb-impl.h" />
+    <ClInclude Include="src\gb-opcode.h" />
+    <ClInclude Include="src\panzgb.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

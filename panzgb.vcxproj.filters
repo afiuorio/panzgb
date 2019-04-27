@@ -15,69 +15,43 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="panzgb.c">
+    <ClCompile Include="src\gb-memory.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libpanzgb\src\gb-memory.c">
+    <ClCompile Include="src\gb-opcodes-impl.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libpanzgb\src\gb-opcodes-impl.c">
+    <ClCompile Include="src\gb-opcodes.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libpanzgb\src\gb-opcodes.c">
+    <ClCompile Include="src\gb-video.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libpanzgb\src\gb-video.c">
+    <ClCompile Include="src\gc-imp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libpanzgb\src\gc-imp.c">
+    <ClCompile Include="src\gc-interrupts.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libpanzgb\src\gc-interrupts.c">
+    <ClCompile Include="src\mbc1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libpanzgb\src\mbc1.c">
+    <ClCompile Include="src\mbc3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libpanzgb\src\mbc3.c">
+    <ClCompile Include="src\panzgb.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="libpanzgb\include\panzgb.h">
+    <ClInclude Include="src\gb-impl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="libpanzgb\src\gb-impl.h">
+    <ClInclude Include="src\gb-opcode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="libpanzgb\src\gb-opcode.h">
+    <ClInclude Include="src\panzgb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="libpanzgb\src\panzgb.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".vscode\ipch\1505a1c996a3d813\mmap_address.bin">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include=".vscode\ipch\2ad7f7f7862a5382\mmap_address.bin">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include=".vscode\ipch\32080e7dd10fc51c\mmap_address.bin">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include=".vscode\ipch\9d71fa31510b6700\mmap_address.bin">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include=".vscode\ipch\b51fb7a35b1eaeb8\mmap_address.bin">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include=".vscode\ipch\dc81dd84217ab85e\mmap_address.bin">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include=".vscode\ipch\fb9efff85cb450c8\mmap_address.bin">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>
