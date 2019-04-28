@@ -27,7 +27,7 @@ void renderScreen(gb *cpu, SDL_Renderer *rend, SDL_Surface *surface) {
     rectangle.h = SCALE;
     for (y = 0; y < 144; y++) {
         for (x = 0; x < 160; x++) {
-            BYTE color = getPixelColor(cpu, x, y);
+            WORD color = getPixelColor(cpu, x, y);
             for (j = x + 1; color == getPixelColor(cpu, j, y) && j < 160; j++)
                 ;
             rectangle.w = SCALE * (j - x);
@@ -35,7 +35,7 @@ void renderScreen(gb *cpu, SDL_Renderer *rend, SDL_Surface *surface) {
             rectangle.y = y * SCALE;
             x = j - 1;
             SDL_FillRect(surface, &rectangle,
-                         SDL_MapRGBA(surface->format, color, color, color, 0));
+                         SDL_MapRGBA(surface->format, getRedFromPixel(cpu, color), getGreenFromPixel(cpu, color),getBlueFromPixel(cpu, color), 0));
         }
     }
     /*I probably can do better than this every frame*/

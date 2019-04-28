@@ -44,8 +44,8 @@ BYTE readMemory(gb *cpu, WORD addr) {
         return cpu->RAMBank[t + (cpu->currentRAMBank * 0x2000)];
     } else if (addr == 0xFF00)
         return getKeypad(cpu);
-    if(addr == 0xFF68 || addr == 0xFF69 || addr == 0xFF6A || addr == 0xFF6B || 
-         addr == 0xFF4f || addr == 0xFF51|| addr == 0xFF52|| addr == 0xFF53 || addr == 0xFF54 || addr == 0xFF55){
+    if(addr == 0xFF6A || addr == 0xFF6B || 
+         addr == 0xFF4f || addr == 0xFF55){
             printf("reading %x\n",addr);
     }
     return cpu->memory[addr];
@@ -94,6 +94,23 @@ void writeMemory(gb *cpu, WORD addr, BYTE data) {
         cpu->memory[LCD_SCANLINE_ADRR] = 0;
     else if (addr == DMA_ADRR)
         DMATransfert(cpu, data);
+	else if (addr == HDMA_SOURCE_HIGH) {
+		cpu->memory[addr] = data;
+	}
+	else if (addr == HDMA_SOURCE_LOW) {
+		cpu->memory[addr] = data & 0xF0;
+	}
+	else if (addr == HDMA_DESTINATION_HIGH) {
+		//The first 3 bit must be set to 100 (the address is always in VRAM)
+		cpu->memory[addr] = (data & 0x1F) | 0x80;
+	}
+	else if (addr == HDMA_DESTINATION_LOW) {
+		cpu->memory[addr] = data & 0xF0;
+	}
+	else if (addr == HDMA_START) {
+		HDMATransfert(cpu, data);
+		cpu->memory[HDMA_START] = 0xFF;
+	}
     else if (addr == 0xFF4F){
         if(data != 0){
             cpu->currentVideoRamBank = 1;
@@ -103,11 +120,16 @@ void writeMemory(gb *cpu, WORD addr, BYTE data) {
             cpu->memory[addr] = 0;
         }
     }
+	else if (addr == BGPD) {
+		BYTE indexReg = readMemory(cpu, BGPI);
+		BYTE index =  indexReg & 0x3F;
+ 	cpu->colorBackgroundPalette[index] = data;
+		if ((indexReg & 0x80) != 0) {
+			writeMemory(cpu, BGPI, indexReg + 1);
+		}
+	}
+
     else {
-        if(addr == 0xFF68 || addr == 0xFF69 || addr == 0xFF6A || addr == 0xFF6B || 
-         addr == 0xFF4f || addr == 0xFF51|| addr == 0xFF52|| addr == 0xFF53 || addr == 0xFF54 || addr == 0xFF55){
-            printf("writing %x = %x\n",addr, data);
-        }
         cpu->memory[addr] = data;
     }
 }

@@ -30,6 +30,15 @@
 #define WINDOWY 0xFF4A
 #define WINDOWX 0xFF4B
 
+#define HDMA_SOURCE_HIGH 0xFF51
+#define HDMA_SOURCE_LOW 0XFF52
+#define HDMA_DESTINATION_HIGH 0XFF53
+#define HDMA_DESTINATION_LOW 0XFF54
+#define HDMA_START 0XFF55
+
+#define BGPI 0xFF68
+#define BGPD 0xFF69
+
 #define getAF(cpu) ((cpu->A << 8) | (cpu->F))
 #define getBC(cpu) ((cpu->B << 8) | (cpu->C))
 #define getDE(cpu) ((cpu->D << 8) | (cpu->E))
@@ -119,7 +128,7 @@ struct gameboy {
 
     /*This is the screen*/
 
-    BYTE screenData[144][160];
+    WORD screenData[144][160];
 
     BYTE cpuHalted;
 
@@ -132,6 +141,8 @@ struct gameboy {
     int currentVideoRamBank;
 
     BYTE videoRamBank[0x4000];
+
+	BYTE colorBackgroundPalette[0x40];
 
 };
 
@@ -146,6 +157,7 @@ void handleInterrupts(gb *cpu);
 void handleGraphic(gb *cpu, BYTE cycles);
 
 void DMATransfert(gb *cpu, BYTE data);
+void HDMATransfert(gb* cpu, BYTE data);
 
 void mbc1_changeBank(gb *cpu, WORD addr, BYTE data);
 void mbc3_changeBank(gb *cpu, WORD addr, BYTE data);

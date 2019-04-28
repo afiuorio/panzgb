@@ -1,6 +1,6 @@
 #include "gb-impl.h"
 
-BYTE getColour(BYTE colourNum, BYTE palette) {
+BYTE getColour(BYTE colourNum, WORD palette) {
     BYTE hi = 0;
     BYTE lo = 0;
 
@@ -19,6 +19,7 @@ void renderTiles(gb *cpu) {
     WORD tileData = 0;
     WORD backgroundMemory = 0;
     BYTE unsig = 1;
+	BYTE bckVRAMBank = cpu->currentVideoRamBank;
 
     BYTE lcd_control = readMemory(cpu, LCD_REG_CONTROL);
 
@@ -61,12 +62,9 @@ void renderTiles(gb *cpu) {
     // which line of the tile is being rendered ?
     WORD tileRow = (yPos / 8) * 32;
 
-    BYTE palette = readMemory(cpu, 0xFF47);
-    BYTE colorMap[4] = {getColour(0, palette), getColour(1, palette),
-                        getColour(2, palette), getColour(3, palette)};
-
     // Now I have to render the line, pixel by pixel
     for (BYTE pixel = 0; pixel < 160; pixel++) {
+		cpu->currentVideoRamBank = 0;
         BYTE xPos = pixel + scrollX;
 
         if ((lcd_control & 0x08) != 0)
@@ -99,6 +97,32 @@ void renderTiles(gb *cpu) {
                 0xff;
         }
 
+		WORD colorMap[4];
+
+		if (cpu->is_cgb != 0) {
+			cpu->currentVideoRamBank = 1;
+			WORD tileAttributes = readMemory(cpu, tileAddrss);
+
+			if ((tileAttributes & 0x08) == 0) {
+				cpu->currentVideoRamBank = 0;
+			}
+
+			BYTE bkgPaletteNumber = tileAttributes & 0x07;
+			
+			for (int j = 0; j < 4; j++) {
+				BYTE hi = cpu->colorBackgroundPalette[(bkgPaletteNumber * 8) + (j * 2) +1];
+				BYTE low = cpu->colorBackgroundPalette[(bkgPaletteNumber * 8) + (j * 2)];
+
+				colorMap[j] = (hi << 8) | low;
+			}
+		}
+		else {
+			WORD palette = readMemory(cpu, 0xFF47);
+			for (int j = 0; j < 4; j++) {
+				colorMap[j] = getColour(j, palette);
+			}
+		}
+
         // deduce where this tile identifier is in memory.
         WORD tileLocation = tileData + (tileNum * 16);
 
@@ -115,10 +139,11 @@ void renderTiles(gb *cpu) {
         colourNum <<= 1;
         colourNum |= ((data1 >> (colourBit)) & 0x1);
 
-        BYTE col = colorMap[colourNum];
+        WORD col = colorMap[colourNum];
 
         cpu->screenData[currentLine][pixel] = col;
     }
+	cpu->currentVideoRamBank = bckVRAMBank;
 }
 
 void renderSprites(gb *cpu) {
@@ -310,9 +335,12 @@ void handleGraphic(gb *cpu, BYTE cycles) {
     }
 }
 
-BYTE getPixelColor(gb *cpu, BYTE x, BYTE y) {
-    BYTE col = cpu->screenData[y][x];
+WORD getPixelColor(gb *cpu, BYTE x, BYTE y) {
+    WORD col = cpu->screenData[y][x];
     BYTE color = 0;
+	if (cpu->is_cgb != 0) {
+		return col;
+	}
     switch (col) {
     case 0:
         color = BLACK_COL;
@@ -328,4 +356,25 @@ BYTE getPixelColor(gb *cpu, BYTE x, BYTE y) {
         break;
     }
     return color;
+}
+
+BYTE getRedFromPixel(gb *cpu, WORD color) {
+	if (cpu->is_cgb == 0) {
+		return color;
+	}
+	return (color & 0x1F) * 8;
+}
+
+BYTE getGreenFromPixel(gb* cpu, WORD color) {
+	if (cpu->is_cgb == 0) {
+		return color;
+	}
+	return ((color >> 5) & 0x1F) * 8;
+}
+
+BYTE getBlueFromPixel(gb* cpu, WORD color) {
+	if (cpu->is_cgb == 0) {
+		return color;
+	}
+	return ((color >> 10) & 0x1F) * 8;
 }

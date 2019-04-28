@@ -55,8 +55,8 @@ void initGameBoy(gb *cpu) {
     cpu->keymap = 0xFF;
 
     setGbBanking(cpu);
+	cpu->currentVideoRamBank = 0;
     if(cpu->is_cgb){
-        cpu->currentVideoRamBank = 0;
         cpu->A = 0x11;
     }
 }
@@ -66,6 +66,15 @@ void DMATransfert(gb *cpu, BYTE data) {
     for (int i = 0; i < 0xA0; i++) {
         writeMemory(cpu, 0xFE00 + i, readMemory(cpu, addr + i));
     }
+}
+
+void HDMATransfert(gb* cpu, BYTE data) {
+	WORD src = (readMemory(cpu, HDMA_SOURCE_HIGH) << 8) | readMemory(cpu, HDMA_SOURCE_LOW);
+	WORD dst = (readMemory(cpu, HDMA_DESTINATION_HIGH) << 8) | readMemory(cpu, HDMA_DESTINATION_LOW);
+	printf("STUB: doing DMA transfert from %x to %x(data %x)\n", src, dst, data);
+	for (int i = 0; i <= (data & 0x7F); i++) {
+		writeMemory(cpu, dst + i, readMemory(cpu, src + i));
+	}
 }
 
 BYTE getKeypad(gb *cpu) {

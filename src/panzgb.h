@@ -45,7 +45,10 @@ void changeKeyState(gb *cpu, BYTE key, BYTE state);
 #define GRAY_COL 0xcc//0xaa
 #define BLACK_COL 0xff
 
-BYTE getPixelColor(gb *cpu, BYTE x, BYTE y);
+WORD getPixelColor(gb *cpu, BYTE x, BYTE y);
+BYTE getRedFromPixel(gb* cpu, WORD color);
+BYTE getGreenFromPixel(gb* cpu, WORD color);
+BYTE getBlueFromPixel(gb* cpu, WORD color);
 
 void setGbBanking(gb *cpu);
 #endif
