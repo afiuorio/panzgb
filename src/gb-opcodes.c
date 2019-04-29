@@ -6,6 +6,9 @@ BYTE executeOpcode(gb *cpu, BYTE opcode) {
     BYTE val = 0;
     SIGNED_BYTE s_val = 0;
     WORD val_16 = 0;
+	if (cpu->progCounter == 0x1796 && getHL(cpu) == 0x8ad0) {
+		printf("istruzione\n");
+	}
     switch (opcode) {
     case 0x00:
         return 4;

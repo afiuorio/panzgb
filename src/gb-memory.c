@@ -42,12 +42,22 @@ BYTE readMemory(gb *cpu, WORD addr) {
     else if ((addr >= 0xA000) && (addr <= 0xBFFF)) {
         WORD t = addr - 0xA000;
         return cpu->RAMBank[t + (cpu->currentRAMBank * 0x2000)];
-    } else if (addr == 0xFF00)
-        return getKeypad(cpu);
-    if(addr == 0xFF6A || addr == 0xFF6B || 
-         addr == 0xFF4f || addr == 0xFF55){
-            printf("reading %x\n",addr);
     }
+	else if ((addr >= 0xC000) && (addr <= 0xCFFF)) {
+		WORD t = addr - 0xC000;
+		return cpu->internalWorkingRam[t];
+	}
+	else if ((addr >= 0xD000) && (addr <= 0xDFFF)) {
+		WORD t = addr - 0xD000;
+		return cpu->internalWorkingRam[t + (cpu->currentInternalWRAMBank * 0x1000)];
+	}
+	else if ((addr >= 0xE000) && (addr < 0xFE00)) {
+		return readMemory(cpu, addr - 0x2000);
+	}
+	else if (addr == 0xFF00)
+        return getKeypad(cpu);
+	/*TODO you should do the read functions for the color palettes*/
+
     return cpu->memory[addr];
 }
 
@@ -71,9 +81,16 @@ void writeMemory(gb *cpu, WORD addr, BYTE data) {
             cpu->RAMBank[t + (cpu->currentRAMBank * 0x2000)] = data;
         }
     }
+	else if ((addr >= 0xC000) && (addr <= 0xCFFF)) {
+		WORD t = addr - 0xC000;
+		cpu->internalWorkingRam[t] = data;
+	}
+	else if ((addr >= 0xD000) && (addr <= 0xDFFF)) {
+		WORD t = addr - 0xD000;
+		cpu->internalWorkingRam[t + (cpu->currentInternalWRAMBank * 0x1000)] = data;
+	}
 
     else if ((addr >= 0xE000) && (addr < 0xFE00)) {
-        cpu->memory[addr] = data;
         writeMemory(cpu, addr - 0x2000, data);
     }
 
@@ -123,10 +140,28 @@ void writeMemory(gb *cpu, WORD addr, BYTE data) {
 	else if (addr == BGPD) {
 		BYTE indexReg = readMemory(cpu, BGPI);
 		BYTE index =  indexReg & 0x3F;
- 	cpu->colorBackgroundPalette[index] = data;
+		cpu->colorBackgroundPalette[index] = data;
 		if ((indexReg & 0x80) != 0) {
 			writeMemory(cpu, BGPI, indexReg + 1);
 		}
+	}
+	else if (addr == OBPD) {
+		BYTE indexReg = readMemory(cpu, OBPI);
+		BYTE index = indexReg & 0x3F;
+		cpu->colorSpritePalette[index] = data;
+		if ((indexReg & 0x80) != 0) {
+			writeMemory(cpu, OBPI, indexReg + 1);
+		}
+	}
+	else if (addr == SVBK) {
+		if (cpu->is_cgb != 0) {
+			BYTE newBank = data & 0x07;
+			printf("(%x) switching bank from %x to %x\n",data, cpu->currentInternalWRAMBank, newBank);
+			cpu->currentInternalWRAMBank = (newBank == 0 ? 1 : newBank);
+		}
+	}
+	else if (addr == KEY1) {
+		printf("CGB function %x not yet implemented!!\n", addr);
 	}
 
     else {

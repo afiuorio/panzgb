@@ -106,6 +106,9 @@ void renderTiles(gb *cpu) {
 			if ((tileAttributes & 0x08) == 0) {
 				cpu->currentVideoRamBank = 0;
 			}
+			else {
+				cpu->currentVideoRamBank = 1;
+			}
 
 			BYTE bkgPaletteNumber = tileAttributes & 0x07;
 			
@@ -150,6 +153,7 @@ void renderSprites(gb *cpu) {
     BYTE ysize = 8;
     BYTE currentLine = readMemory(cpu, 0xFF44);
     BYTE lcd_control = readMemory(cpu, LCD_REG_CONTROL);
+	BYTE bckVRAMBank = cpu->currentVideoRamBank;
     if ((lcd_control & 0x4) != 0)
         ysize = 16;
 
@@ -161,6 +165,7 @@ void renderSprites(gb *cpu) {
      * 3 : several flags
      */
     for (BYTE index = 0; index < 40 * 4; index += 4) {
+		cpu->currentVideoRamBank = 0;
         BYTE yPos = readMemory(cpu, 0xFE00 + index) - 16;
 
         if ((currentLine < yPos) || (currentLine >= (yPos + ysize)))
@@ -176,6 +181,36 @@ void renderSprites(gb *cpu) {
 
         BYTE yFlip = attributes & 0x40;
         BYTE xFlip = attributes & 0x20;
+
+		WORD colorMap[4];
+		if (cpu->is_cgb != 0) {
+			if ((attributes & 0x08) == 0) {
+				cpu->currentVideoRamBank = 0;
+			}
+			else {
+				cpu->currentVideoRamBank = 1;
+			}
+			BYTE spritePaletteNumber = attributes & 0x07;
+
+			for (int j = 0; j < 4; j++) {
+				BYTE hi = cpu->colorSpritePalette[(spritePaletteNumber * 8) + (j * 2) + 1];
+				BYTE low = cpu->colorSpritePalette[(spritePaletteNumber * 8) + (j * 2)];
+
+				colorMap[j] = (hi << 8) | low;
+			}
+		}
+		else {
+			WORD colourAddress;
+			WORD palette;
+			if ((attributes & 0x10) != 0)
+				colourAddress = 0xFF49;
+			else
+				colourAddress = 0xFF48;
+			palette = readMemory(cpu, colourAddress);
+			for (int j = 0; j < 4; j++) {
+				colorMap[j] = getColour(j, palette);
+			}
+		}
 
         // does this sprite intercept with the scanline?
         BYTE line = currentLine - yPos;
@@ -210,14 +245,7 @@ void renderSprites(gb *cpu) {
             if (colourNum == 0)
                 continue;
 
-            WORD colourAddress;
-            if ((attributes & 0x10) != 0)
-                colourAddress = 0xFF49;
-            else
-                colourAddress = 0xFF48;
-
-            BYTE palette = readMemory(cpu, colourAddress);
-            BYTE col = getColour(colourNum, palette);
+			WORD col = colorMap[colourNum];
 
             SIGNED_BYTE xPix = 0 - tilePixel;
             xPix += 7;
@@ -235,6 +263,7 @@ void renderSprites(gb *cpu) {
             cpu->screenData[currentLine][pixel] = col;
         }
     }
+	cpu->currentVideoRamBank = bckVRAMBank;
 }
 
 void drawScanline(gb *cpu) {

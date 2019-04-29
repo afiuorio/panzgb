@@ -38,6 +38,11 @@
 
 #define BGPI 0xFF68
 #define BGPD 0xFF69
+#define OBPI 0xFF6A
+#define OBPD 0xFF6B
+
+#define KEY1 0xFF4D
+#define SVBK 0xFF70
 
 #define getAF(cpu) ((cpu->A << 8) | (cpu->F))
 #define getBC(cpu) ((cpu->B << 8) | (cpu->C))
@@ -143,6 +148,12 @@ struct gameboy {
     BYTE videoRamBank[0x4000];
 
 	BYTE colorBackgroundPalette[0x40];
+
+	BYTE colorSpritePalette[0x40];
+
+	BYTE internalWorkingRam[0x8000];
+
+	int currentInternalWRAMBank;
 
 };
 
