@@ -42,6 +42,9 @@
     <ClCompile Include="src\panzgb.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\hdma.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\gb-impl.h">

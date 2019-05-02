@@ -31,7 +31,8 @@ BYTE readMemory(gb *cpu, WORD addr) {
     }
     if ((addr >= 0x4000) && (addr <= 0x7FFF)) {
         WORD t = addr - 0x4000;
-        return cpu->cartridge[t + (cpu->currentROMBank * 0x4000)];
+		size_t value = (size_t)t + (cpu->currentROMBank * 0x4000);
+        return cpu->cartridge[value];
     }
 
     else if ((addr >= 0x8000) && (addr < 0x9FFF)) {
@@ -125,8 +126,22 @@ void writeMemory(gb *cpu, WORD addr, BYTE data) {
 		cpu->memory[addr] = data & 0xF0;
 	}
 	else if (addr == HDMA_START) {
-		HDMATransfert(cpu, data);
-		cpu->memory[HDMA_START] = 0xFF;
+		if (cpu->isHDMAActive == 1 && (data & 0x80) == 0) {
+			printf("Stopping HDMA\n");
+			cpu->isHDMAActive = 0;
+			cpu->memory[HDMA_START] = 0xFF;
+			//Stop transfert and set to FF
+		}
+		else {
+			if ((data & 0x80) == 0) {
+				HDMAFullTransfert(cpu, data & 0x7f);
+				cpu->memory[HDMA_START] = 0xFF;
+			}
+			else {
+				cpu->memory[HDMA_START] = data & 0x7f;
+				HDMASetupHBlankTransfert(cpu);
+			}
+		}
 	}
     else if (addr == 0xFF4F){
         if(data != 0){
@@ -156,8 +171,9 @@ void writeMemory(gb *cpu, WORD addr, BYTE data) {
 	else if (addr == SVBK) {
 		if (cpu->is_cgb != 0) {
 			BYTE newBank = data & 0x07;
-			printf("(%x) switching bank from %x to %x\n",data, cpu->currentInternalWRAMBank, newBank);
+			//printf("(%x) switching bank from %x to %x\n",data, cpu->currentInternalWRAMBank, newBank);
 			cpu->currentInternalWRAMBank = (newBank == 0 ? 1 : newBank);
+			cpu->memory[addr] = 0xf8 | newBank;
 		}
 	}
 	else if (addr == KEY1) {

@@ -155,6 +155,13 @@ struct gameboy {
 
 	int currentInternalWRAMBank;
 
+	BYTE isHDMAActive;
+
+	WORD currentHDMAPointer;
+
+	WORD currentDstPointer;
+
+	BYTE hasDoneHDMA;
 };
 
 BYTE readMemory(gb *cpu, WORD addr);
@@ -168,7 +175,10 @@ void handleInterrupts(gb *cpu);
 void handleGraphic(gb *cpu, BYTE cycles);
 
 void DMATransfert(gb *cpu, BYTE data);
-void HDMATransfert(gb* cpu, BYTE data);
+
+void HDMAFullTransfert(gb* cpu, BYTE wordToCopy);
+BYTE HDMAHBlankTransfert(gb* cpu);
+void HDMASetupHBlankTransfert(gb* cpu);
 
 void mbc1_changeBank(gb *cpu, WORD addr, BYTE data);
 void mbc3_changeBank(gb *cpu, WORD addr, BYTE data);

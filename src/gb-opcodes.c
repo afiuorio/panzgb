@@ -6,7 +6,11 @@ BYTE executeOpcode(gb *cpu, BYTE opcode) {
     BYTE val = 0;
     SIGNED_BYTE s_val = 0;
     WORD val_16 = 0;
-	if (cpu->progCounter == 0x1796 && getHL(cpu) == 0x8ad0) {
+	if (cpu->isHDMAActive == 1 && (readMemory(cpu, LCD_REG_STATUS) & 0x3) == 0) {
+		cpu->progCounter--;
+		return 4;
+	}
+	if (cpu->progCounter == 0x4239 && cpu->A == 0x86) {
 		printf("istruzione\n");
 	}
     switch (opcode) {

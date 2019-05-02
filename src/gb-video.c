@@ -287,6 +287,10 @@ void updateLCD(gb *cpu) {
         status &= 252;
         status |= 0x1;
         writeMemory(cpu, LCD_REG_STATUS, status);
+		if (cpu->isHDMAActive != 0) {
+			cpu->memory[HDMA_START] = 0xff;
+			cpu->isHDMAActive = 0;
+		}
         return;
     }
 
@@ -346,21 +350,29 @@ void handleGraphic(gb *cpu, BYTE cycles) {
         cpu->clockScanline -= cycles;
     } else
         return;
-
+	if (cpu->clockScanline < 204 && cpu->hasDoneHDMA == 0) {
+		HDMAHBlankTransfert(cpu);
+		cpu->hasDoneHDMA = 1;
+	}
     if (cpu->clockScanline <= 0) {
+		cpu->hasDoneHDMA = 0;
         cpu->memory[LCD_SCANLINE_ADRR]++;
         BYTE currentline = readMemory(cpu, LCD_SCANLINE_ADRR);
         cpu->clockScanline = 456;
 
         /*V-blank interrupt*/
-        if (currentline == 144)
-            raiseInterrupt(cpu, 0);
+		if (currentline == 144) {
+			//HDMAHBlankTransfert(cpu);
+			raiseInterrupt(cpu, 0);
+		}
 
         else if (currentline > 153)
             cpu->memory[LCD_SCANLINE_ADRR] = 0;
 
-        else if (currentline < 144)
-            drawScanline(cpu);
+		else if (currentline < 144) {
+			//HDMAHBlankTransfert(cpu);
+			drawScanline(cpu);
+		}
     }
 }
 

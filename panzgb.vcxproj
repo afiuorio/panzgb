@@ -175,6 +175,7 @@
     <ClCompile Include="src\gb-video.c" />
     <ClCompile Include="src\gc-imp.c" />
     <ClCompile Include="src\gc-interrupts.c" />
+    <ClCompile Include="src\hdma.c" />
     <ClCompile Include="src\mbc1.c" />
     <ClCompile Include="src\mbc3.c" />
     <ClCompile Include="src\panzgb.c" />
