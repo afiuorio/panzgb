@@ -31,7 +31,7 @@ BYTE readMemory(gb *cpu, WORD addr) {
     }
     if ((addr >= 0x4000) && (addr <= 0x7FFF)) {
         WORD t = addr - 0x4000;
-		size_t value = (size_t)t + (cpu->currentROMBank * 0x4000);
+		size_t value = (size_t)t + ((size_t)cpu->currentROMBank * 0x4000);
         return cpu->cartridge[value];
     }
 
@@ -171,7 +171,7 @@ void writeMemory(gb *cpu, WORD addr, BYTE data) {
 	else if (addr == SVBK) {
 		if (cpu->is_cgb != 0) {
 			BYTE newBank = data & 0x07;
-			//printf("(%x) switching bank from %x to %x\n",data, cpu->currentInternalWRAMBank, newBank);
+			printf("(%x) switching bank from %x to %x\n",data, cpu->currentInternalWRAMBank, newBank);
 			cpu->currentInternalWRAMBank = (newBank == 0 ? 1 : newBank);
 			cpu->memory[addr] = 0xf8 | newBank;
 		}

@@ -26,9 +26,6 @@ BYTE HDMAHBlankTransfert(gb* cpu) {
 	BYTE byteRemaining = readMemory(cpu, HDMA_START);
 	WORD src = cpu->currentHDMAPointer;
 	WORD dst = cpu->currentDstPointer;
-	if (src == 0xd0f0 && dst == 0x8ff0 && byteRemaining == 0x1) {
-		printf("hello");
-	}
 
 	printf("Doing transfert from %x to %x (remains %x words)\n", src, dst, byteRemaining);
 

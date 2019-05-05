@@ -3,10 +3,23 @@
 #include <stdlib.h>
 #include <time.h>
 #include "panzgb.h"
+#include "gb-impl.h"
 
 #define NUM_OP_60HZ (GB_CLOCK / GB_SCREEN_REFRESH_RATE)
 
 #define SCALE 4
+
+void saveGbState(gb* cpu) {
+	FILE* test = fopen("gb.bin", "wb");
+	fwrite(cpu, sizeof(*cpu), 1, test);
+	fclose(test);
+}
+
+void loadGbState(gb* cpu) {
+	FILE* test = fopen("gb.bin", "rb");
+	fread(cpu, sizeof(*cpu), 1, test);
+	fclose(test);
+}
 
 void doScreenshoot(SDL_Renderer *renderer) {
     time_t name;
@@ -83,6 +96,16 @@ void getInput(gb *cpu, SDL_Renderer *rend) {
             case SDLK_f:
                 doScreenshoot(rend);
                 return;
+
+			case SDLK_k:
+				saveGbState(cpu);
+				printf("Salvato gb\n");
+				return;
+			case SDLK_l:
+				loadGbState(cpu);
+				setGbBanking(cpu);
+				printf("Caricato gb\n");
+				return;
 
             default:
                 return;

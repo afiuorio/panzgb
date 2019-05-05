@@ -54,12 +54,12 @@ void initGameBoy(gb *cpu) {
     cpu->whenDisableInterrupts = 0;
     cpu->keymap = 0xFF;
 	cpu->currentInternalWRAMBank = 1;
+	cpu->isHDMAActive = 0;
 
     setGbBanking(cpu);
 	cpu->currentVideoRamBank = 0;
     if(cpu->is_cgb){
         cpu->A = 0x11;
-		cpu->isHDMAActive = 0;
     }
 }
 

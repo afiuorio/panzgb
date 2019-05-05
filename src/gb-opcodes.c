@@ -6,12 +6,13 @@ BYTE executeOpcode(gb *cpu, BYTE opcode) {
     BYTE val = 0;
     SIGNED_BYTE s_val = 0;
     WORD val_16 = 0;
+	//printf("executing (%x) %x\n", cpu->progCounter - 1, opcode);
 	if (cpu->isHDMAActive == 1 && (readMemory(cpu, LCD_REG_STATUS) & 0x3) == 0) {
 		cpu->progCounter--;
 		return 4;
 	}
-	if (cpu->progCounter == 0x4239 && cpu->A == 0x86) {
-		printf("istruzione\n");
+	if (cpu->progCounter == 0x2078) {
+		printf("inst\n");
 	}
     switch (opcode) {
     case 0x00:
@@ -334,16 +335,17 @@ BYTE executeOpcode(gb *cpu, BYTE opcode) {
         val_16 = cpu->stack + s_val;
         RESET_ZFLAG(cpu);
         RESET_NFLAG(cpu);
+		RESET_HFLAG(cpu);
+		RESET_CFLAG(cpu);
 
-        if ((uint32_t)(cpu->stack + s_val) > 0xFFFF)
-            SET_CFLAG(cpu);
-        else
-            RESET_CFLAG(cpu);
+		if ((cpu->stack & 0xF) + (s_val & 0xF) > 0xF) {
+			SET_HFLAG(cpu);
+		}
 
-        if ((uint32_t)(cpu->stack + s_val) > 0x8FF)
-            SET_HFLAG(cpu);
-        else
-            RESET_HFLAG(cpu);
+		if ((cpu->stack & 0xFF) + (s_val & 0xFF) > 0xFF) {
+			SET_CFLAG(cpu);
+		}
+
         cpu->L = val_16 & 0xFF;
         cpu->H = ((val_16 >> 8) & 0xFF);
 
@@ -724,16 +726,17 @@ BYTE executeOpcode(gb *cpu, BYTE opcode) {
         val_16 = cpu->stack + s_val;
         RESET_ZFLAG(cpu);
         RESET_NFLAG(cpu);
+		RESET_HFLAG(cpu);
+		RESET_CFLAG(cpu);
 
-        if ((uint32_t)(cpu->stack + s_val) > 0xFFFF)
-            SET_CFLAG(cpu);
-        else
-            RESET_CFLAG(cpu);
+		if ((cpu->stack & 0xF) + (s_val & 0xF) > 0xF) {
+			SET_HFLAG(cpu);
+		}
 
-        if (((cpu->stack) & 0x8ff + (s_val)) > 0x8FF)
-            SET_HFLAG(cpu);
-        else
-            RESET_HFLAG(cpu);
+		if ((cpu->stack & 0xFF) + (s_val & 0xFF) > 0xFF) {
+			SET_CFLAG(cpu);
+		}
+
         cpu->stack = val_16;
         return 16;
 
