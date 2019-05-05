@@ -62,7 +62,7 @@ void JMP(gb *cpu, WORD addr) {
 void ADD_8BIT(gb *cpu, BYTE *regA, BYTE regB) {
     WORD value = (*regA) + regB;
 
-    if (value > 0xFF)
+    if (value > 255)
         SET_CFLAG(cpu);
     else
         RESET_CFLAG(cpu);
@@ -85,26 +85,7 @@ void ADD_8BIT(gb *cpu, BYTE *regA, BYTE regB) {
 }
 
 void ADDC_8BIT(gb *cpu, BYTE *regA, BYTE regB) {
-    //ADD_8BIT(cpu, regA, (BYTE)(regB + ((cpu->F & 0x10) ? 1 : 0)));
-	BYTE carry = (cpu->F & 0x10 ? 1 : 0);
-	BYTE res = *regA + regB + carry;
-	RESET_ZFLAG(cpu);
-	RESET_NFLAG(cpu);
-	RESET_HFLAG(cpu);
-	RESET_CFLAG(cpu);
-	
-	if (res == 0)
-		SET_ZFLAG(cpu);
-
-	if ((*regA & 0xF) + (regB & 0xF) + carry > 0x0F)
-		SET_HFLAG(cpu);
-
-	if (((WORD)*regA) + ((WORD)regB) + carry > 0xFF)
-		SET_CFLAG(cpu);
-
-	*regA = res;
-
-
+    ADD_8BIT(cpu, regA, (BYTE)(regB + ((cpu->F & 0x10) ? 1 : 0)));
     /*	BYTE ret = regB + ((cpu->F &0x10)?1:0);
             WORD value = (*regA) + ret;
             //printf("(%x) %x +(%x) %x + %x (%x) = %x\n",i,*regA, (cpu->A),regB,
@@ -158,24 +139,7 @@ void SUB_8BIT(gb *cpu, BYTE *regA, BYTE regB) {
 }
 
 void SUBC_8BIT(gb *cpu, BYTE *regA, BYTE regB) {
-    //SUB_8BIT(cpu, regA, (BYTE)(regB + ((cpu->F & 0x10) ? 1 : 0)));
-	BYTE carry = ((cpu->F & 0x10) != 0 ? 1 : 0);
-	BYTE res = *regA - regB - carry;
-	RESET_ZFLAG(cpu);
-	SET_NFLAG(cpu);
-	RESET_HFLAG(cpu);
-	RESET_CFLAG(cpu);
-
-	if (res == 0)
-		SET_ZFLAG(cpu);
-
-	if ((*regA & 0xF) < (regB & 0xF) + carry)
-		SET_HFLAG(cpu);
-
-	if (((WORD)*regA) - ((WORD)regB) - carry > 0xFF)
-		SET_CFLAG(cpu);
-
-	*regA = res;
+    SUB_8BIT(cpu, regA, (BYTE)(regB + ((cpu->F & 0x10) ? 1 : 0)));
     /*BYTE ret = regB + (SIGNED_BYTE)((cpu->F &0x10)?1:0);
     int32_t value = (*regA) - ret;
 
@@ -251,7 +215,7 @@ void CP_8BIT(gb *cpu, BYTE regB) {
 void INC_8BIT(gb *cpu, BYTE *reg) {
     BYTE val = *reg;
     val++;
-    if (((val) & 0xF) == 0)
+    if (((*reg) & 0xF) == 0)
         SET_HFLAG(cpu);
     else
         RESET_HFLAG(cpu);
@@ -326,23 +290,24 @@ void SET_BIT(gb *cpu, BYTE *val, BYTE numBit) {
 }
 
 void ADD_16BIT(gb *cpu, BYTE *regA, BYTE *regB, WORD src) {
-    WORD val = (((*regA) << 8)) | ((*regB) & 0xFF);
+    uint32_t val = (((*regA) << 8)) | ((*regB) & 0xFF);
     // uint32_t val = (((*regA)<<8)) | ((*regB) &0xFF);
+    val += src;
     RESET_NFLAG(cpu);
-	RESET_CFLAG(cpu);
-	RESET_HFLAG(cpu);
 
     if (val > 0xFFFF)
         SET_CFLAG(cpu);
+    else
+        RESET_CFLAG(cpu);
 
-	if (((val & 0xFFF) + (src & 0xFFF)) & 0x1000) {
-		SET_HFLAG(cpu);
-	}
+    WORD h = (((((*regA) << 8)) | ((*regB) & 0xFF)) & 0x8FF);
+    h += (src & 0x8FF);
 
-	if (((uint32_t)val + (uint32_t)src) & 0x10000) {
-		SET_CFLAG(cpu);
-	}
-	val += src;
+    if (h > 0x8FF)
+        SET_HFLAG(cpu);
+    else
+        RESET_HFLAG(cpu);
+
     *regA = (val >> 8) & 0xFF;
     *regB = (val & 0xFF);
 }
@@ -389,17 +354,17 @@ void ROTATE_LEFT_CARRY(gb *cpu, BYTE *reg) {
     BYTE val = *reg;
     BYTE msb = (val >> 7) & 0x1;
     val <<= 1;
-
-	if (val == 0)
-		SET_ZFLAG(cpu);
-	else
-		RESET_ZFLAG(cpu);
-
+    if (cpu->F & 0x10)
+        val |= 0x1;
     if (msb)
         SET_CFLAG(cpu);
     else
         RESET_CFLAG(cpu);
-	val |= msb;
+
+    if (val == 0)
+        SET_ZFLAG(cpu);
+    else
+        RESET_ZFLAG(cpu);
     *reg = val;
 }
 
@@ -456,34 +421,6 @@ void SHIFT_RIGHT(gb *cpu, BYTE *reg) {
 }
 
 void DAA(gb *cpu) {
-	SIGNED_WORD result = cpu->A;
-	if (cpu->F & 0x40) {
-		if (cpu->F & 0x20) {
-			result = (result - 0x06) & 0xFF;
-		}
-
-		if (cpu->F & 0x10) {
-			result -= 0x60;
-		}
-	}
-	else {
-		if ((cpu->F & 0x20) || (result & 0x0F) > 0x09) {
-			result += 0x06;
-		}
-
-		if ((cpu->F & 0x10) || result > 0x9F) {
-			result += 0x60;
-		}
-	}
-	RESET_HFLAG(cpu);
-	if ((result & 0xFF) == 0)
-		SET_ZFLAG(cpu);
-
-	if ((result & 0x100) == 0x100)
-		SET_CFLAG(cpu);
-
-	cpu->A = (result & 0xFF);
-/*
     uint32_t a = cpu->A;
 
     if (!(cpu->F & 0x40)) {
@@ -508,5 +445,4 @@ void DAA(gb *cpu) {
     if (a == 0)
         SET_ZFLAG(cpu);
     cpu->A = (BYTE)a;
-	*/
 }

@@ -171,7 +171,6 @@ void writeMemory(gb *cpu, WORD addr, BYTE data) {
 	else if (addr == SVBK) {
 		if (cpu->is_cgb != 0) {
 			BYTE newBank = data & 0x07;
-			printf("(%x) switching bank from %x to %x\n",data, cpu->currentInternalWRAMBank, newBank);
 			cpu->currentInternalWRAMBank = (newBank == 0 ? 1 : newBank);
 			cpu->memory[addr] = 0xf8 | newBank;
 		}
