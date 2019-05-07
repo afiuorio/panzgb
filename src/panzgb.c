@@ -29,7 +29,7 @@ void doScreenshoot(SDL_Renderer *renderer) {
                              0x0000ff00, 0x000000ff, 0xff000000);
     SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ARGB8888,
                          sshot->pixels, sshot->pitch);
-    SDL_SaveBMP(sshot, ctime(&name));
+    SDL_SaveBMP(sshot, "test.png");
     SDL_FreeSurface(sshot);
 }
 

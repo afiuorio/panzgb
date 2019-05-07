@@ -41,5 +41,6 @@ BYTE HDMAHBlankTransfert(gb* cpu) {
 	}
 	else {
 		cpu->memory[HDMA_START] = --byteRemaining;
+		printf("Set remaining word to %x\n", cpu->memory[HDMA_START]);
 	}
 }

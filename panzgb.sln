@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "panzgb", "panzgb.vcxproj", "{76AB20FB-89C4-4831-B876-293EBD7E7461}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug GB|x64 = Debug GB|x64
+		Debug GB|x86 = Debug GB|x86
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Debug GB|x64.ActiveCfg = Debug GB|x64
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Debug GB|x64.Build.0 = Debug GB|x64
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Debug GB|x86.ActiveCfg = Debug GB|Win32
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Debug GB|x86.Build.0 = Debug GB|Win32
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Debug|x64.ActiveCfg = Debug GBC|x64
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Debug|x64.Build.0 = Debug GBC|x64
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Debug|x86.ActiveCfg = Debug GBC|Win32
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Debug|x86.Build.0 = Debug GBC|Win32
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Release|x64.ActiveCfg = Release|x64
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Release|x64.Build.0 = Release|x64
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Release|x86.ActiveCfg = Release|Win32
+		{76AB20FB-89C4-4831-B876-293EBD7E7461}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9235FD4B-7BE2-4B11-B3F0-9BFE8D601786}
+	EndGlobalSection
+EndGlobal
