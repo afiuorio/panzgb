@@ -9,16 +9,13 @@ BYTE executeOpcode(gb *cpu, BYTE opcode) {
 	//printf("executing (%x) %x\n", cpu->progCounter - 1, opcode);
 	if (cpu->isHDMAActive == 1 && (readMemory(cpu, LCD_REG_STATUS) & 0x3) == 0) {
 		cpu->progCounter--;
-		return 4;
-	}
-	if (cpu->progCounter == 0x2078) {
-		printf("inst\n");
+		return 8;
 	}
     switch (opcode) {
     case 0x00:
         return 4;
     case 0x76:
-        //cpu->cpuHalted = 0;
+        cpu->cpuHalted = 0;
         return 4;
     case 0x06:
         GET_BYTE_PC(cpu, val)

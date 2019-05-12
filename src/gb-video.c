@@ -350,7 +350,7 @@ void handleGraphic(gb *cpu, BYTE cycles) {
         cpu->clockScanline -= cycles;
     } else
         return;
-	if (cpu->clockScanline < 204 && cpu->hasDoneHDMA == 0) {
+	if ((readMemory(cpu, LCD_REG_STATUS) & 0x3) == 0 && cpu->isHDMAActive == 1 && cpu->hasDoneHDMA == 0) {
 		HDMAHBlankTransfert(cpu);
 		cpu->hasDoneHDMA = 1;
 	}
@@ -358,7 +358,7 @@ void handleGraphic(gb *cpu, BYTE cycles) {
 		cpu->hasDoneHDMA = 0;
         cpu->memory[LCD_SCANLINE_ADRR]++;
         BYTE currentline = readMemory(cpu, LCD_SCANLINE_ADRR);
-        cpu->clockScanline = 456;
+        cpu->clockScanline += 456;
 
         /*V-blank interrupt*/
 		if (currentline == 144) {

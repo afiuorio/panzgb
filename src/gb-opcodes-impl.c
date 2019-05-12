@@ -300,10 +300,10 @@ void ADD_16BIT(gb *cpu, BYTE *regA, BYTE *regB, WORD src) {
     else
         RESET_CFLAG(cpu);
 
-    WORD h = (((((*regA) << 8)) | ((*regB) & 0xFF)) & 0x8FF);
-    h += (src & 0x8FF);
+    WORD h = (((((*regA) << 8)) | ((*regB) & 0xFF)) & 0x7FF);
+    h += (src & 0x7FF);
 
-    if (h > 0x8FF)
+    if (h > 0x7FF)
         SET_HFLAG(cpu);
     else
         RESET_HFLAG(cpu);

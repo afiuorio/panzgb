@@ -128,8 +128,8 @@ void writeMemory(gb *cpu, WORD addr, BYTE data) {
 	else if (addr == HDMA_START) {
 		if (cpu->isHDMAActive == 1 && (data & 0x80) == 0) {
 			printf("Stopping HDMA\n");
-			//cpu->isHDMAActive = 0;
-			//cpu->memory[HDMA_START] = 0xFF;
+			cpu->isHDMAActive = 0;
+			cpu->memory[HDMA_START] = 0xFF;
 			//Stop transfert and set to FF
 		}
 		else {

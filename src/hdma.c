@@ -17,6 +17,7 @@ void HDMASetupHBlankTransfert(gb* cpu) {
 	cpu->currentHDMAPointer = src;
 	cpu->currentDstPointer = dst;
 	cpu->isHDMAActive = 1;
+	cpu->hasDoneHDMA = 0;
 }
 
 BYTE HDMAHBlankTransfert(gb* cpu) {
