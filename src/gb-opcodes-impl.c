@@ -85,7 +85,27 @@ void ADD_8BIT(gb *cpu, BYTE *regA, BYTE regB) {
 }
 
 void ADDC_8BIT(gb *cpu, BYTE *regA, BYTE regB) {
-    ADD_8BIT(cpu, regA, (BYTE)(regB + ((cpu->F & 0x10) ? 1 : 0)));
+    //ADD_8BIT(cpu, regA, (BYTE)(regB + ((cpu->F & 0x10) ? 1 : 0)));
+	BYTE carry = (cpu->F & 0x10) != 0 ? 1 : 0;
+	RESET_ZFLAG(cpu);
+	RESET_HFLAG(cpu);
+	RESET_NFLAG(cpu);
+	RESET_CFLAG(cpu);
+
+	WORD result = *regA + regB + carry;
+
+	if ((result & 0xFF) == 0) {
+		SET_ZFLAG(cpu);
+	}
+	if ((*regA & 0xF) + (regB & 0xF) + carry > 0x0F) {
+		SET_HFLAG(cpu);
+	}
+	if (result > 0xFF) {
+		SET_CFLAG(cpu);
+	}
+
+	*regA = result & 0xFF;
+
     /*	BYTE ret = regB + ((cpu->F &0x10)?1:0);
             WORD value = (*regA) + ret;
             //printf("(%x) %x +(%x) %x + %x (%x) = %x\n",i,*regA, (cpu->A),regB,
