@@ -766,20 +766,53 @@ BYTE executeOpcode(gb *cpu, BYTE opcode) {
         return 4;
 
     case 0x07:
-        ROTATE_LEFT(cpu, &(cpu->A));
-        SET_ZFLAG(cpu);
+		val = (cpu->A >> 7) & 0x1;
+		cpu->A <<= 1;
+		cpu->F = 0;
+
+		if (val != 0) {
+			cpu->A |= 0x1;
+			SET_CFLAG(cpu);
+		}
         return 4;
     case 0x0F:
-        ROTATE_RIGHT(cpu, &(cpu->A));
-        SET_ZFLAG(cpu);
+		val = cpu->A & 0x01;
+		cpu->A >>= 1;
+		cpu->F = 0;
+
+		if (val) {
+			cpu->A |= 0x80;
+			SET_CFLAG(cpu);
+		}
+        //ROTATE_RIGHT(cpu, &(cpu->A));
         return 4;
     case 0x17:
-        ROTATE_LEFT_CARRY(cpu, &(cpu->A));
-        SET_ZFLAG(cpu);
+		val = (cpu->A >> 7) & 0x1;
+
+		cpu->A <<= 1;
+		if ((cpu->F & 0x80) != 0) {
+			cpu->A |= 0x01;
+		}
+		cpu->F = 0;
+		if (val) {
+			SET_CFLAG(cpu);
+		}
+
+
+        //ROTATE_LEFT_CARRY(cpu, &(cpu->A));
         return 4;
-    case 0x1f:
-        ROTATE_RIGHT_CARRY(cpu, &(cpu->A));
-        SET_ZFLAG(cpu);
+    case 0x1F:
+		val = cpu->A & 0x01;
+
+		cpu->A >>= 1;
+		if ((cpu->F & 0x10) != 0) {
+			cpu->A |= 0x80;
+		}
+		cpu->F = 0;
+		if (val) {
+			SET_CFLAG(cpu);
+		}
+        //ROTATE_RIGHT_CARRY(cpu, &(cpu->A));
         return 4;
 
     case 0xF3:
@@ -1022,7 +1055,7 @@ unsigned int extendedOpcodes(gb *cpu, BYTE opcode) {
         writeMemory(cpu, getHL(cpu), val);
         return 16;
     case 0x0F:
-        ROTATE_LEFT(cpu, &(cpu->A));
+        ROTATE_RIGHT(cpu, &(cpu->A));
         return 8;
 
     case 0x10:
