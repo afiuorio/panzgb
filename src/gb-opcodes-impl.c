@@ -406,6 +406,20 @@ void ROTATE_RIGHT(gb *cpu, BYTE *reg) {
 }
 
 void ROTATE_LEFT_CARRY(gb *cpu, BYTE *reg) {
+	BYTE val = *reg;
+	BYTE msb = (val >> 7) & 0x01;
+	BYTE carry = (cpu->F & 0x10) != 0 ? 1 : 0;
+
+	val = (val << 1) | carry;
+	cpu->F = 0;
+	if (msb) {
+		SET_CFLAG(cpu);
+	}
+	if (val == 0) {
+		SET_ZFLAG(cpu);
+	}
+	*reg = val;
+	/*
     BYTE val = *reg;
     BYTE msb = (val >> 7) & 0x1;
     val <<= 1;
@@ -421,10 +435,24 @@ void ROTATE_LEFT_CARRY(gb *cpu, BYTE *reg) {
     else
         RESET_ZFLAG(cpu);
     *reg = val;
+	*/
 }
 
 void ROTATE_RIGHT_CARRY(gb *cpu, BYTE *reg) {
-    BYTE val = *reg;
+	BYTE val = *reg;
+	BYTE lsb = (val) & 0x01;
+	BYTE carry = (cpu->F & 0x10) != 0 ? 1 : 0;
+
+	val = (val >> 1) | (carry << 7);
+	cpu->F = 0;
+	if (lsb) {
+		SET_CFLAG(cpu);
+	}
+	if (val == 0) {
+		SET_ZFLAG(cpu);
+	}
+	*reg = val;
+  /*  BYTE val = *reg;
     BYTE msb = val & 0x1;
     val >>= 1;
     if ((cpu->F & 0x10) != 0)
@@ -440,7 +468,7 @@ void ROTATE_RIGHT_CARRY(gb *cpu, BYTE *reg) {
         SET_ZFLAG(cpu);
     else
         RESET_ZFLAG(cpu);
-    *reg = val;
+    *reg = val;*/
 }
 
 void SHIFT_LEFT(gb *cpu, BYTE *reg) {
