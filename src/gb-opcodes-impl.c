@@ -159,7 +159,29 @@ void SUB_8BIT(gb *cpu, BYTE *regA, BYTE regB) {
 }
 
 void SUBC_8BIT(gb *cpu, BYTE *regA, BYTE regB) {
-    SUB_8BIT(cpu, regA, (BYTE)(regB + ((cpu->F & 0x10) ? 1 : 0)));
+    //SUB_8BIT(cpu, regA, (BYTE)(regB + ((cpu->F & 0x10) ? 1 : 0)));
+	BYTE carry = (cpu->F & 0x10) != 0 ? 1 : 0;
+	RESET_ZFLAG(cpu);
+	RESET_HFLAG(cpu);
+	SET_NFLAG(cpu);
+	RESET_CFLAG(cpu);
+
+	WORD result = *regA - regB - carry;
+
+	if ((result & 0xFF) == 0) {
+		SET_ZFLAG(cpu);
+	}
+	if ((*regA & 0xF) < (regB & 0xF) + carry) {
+		SET_HFLAG(cpu);
+	}
+	if (result > 0xFF) {
+		SET_CFLAG(cpu);
+	}
+
+	*regA = result & 0xFF;
+
+
+
     /*BYTE ret = regB + (SIGNED_BYTE)((cpu->F &0x10)?1:0);
     int32_t value = (*regA) - ret;
 
