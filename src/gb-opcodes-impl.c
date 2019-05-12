@@ -463,6 +463,39 @@ void SHIFT_RIGHT(gb *cpu, BYTE *reg) {
 }
 
 void DAA(gb *cpu) {
+	SIGNED_WORD result = cpu->A;
+	
+	RESET_ZFLAG(cpu);
+
+	if (cpu->F & 0x40) {
+		if (cpu->F & 0x20) {
+			result = (result - 0x06) & 0xFF;
+		}
+
+		if (cpu->F & 0x10) {
+			result -= 0x60;
+		}
+	}
+	else {
+		if ((cpu->F & 0x20) || (result & 0x0F) > 0x09) {
+			result += 0x06;
+		}
+
+		if ((cpu->F & 0x10) || result > 0x9F) {
+			result += 0x60;
+		}
+	}
+
+	if ((result & 0xFF) == 0) {
+		SET_ZFLAG(cpu);
+	}
+
+	if ((result & 0x100) == 0x100) {
+		SET_CFLAG(cpu);
+	}
+	RESET_HFLAG(cpu);
+	cpu->A = (result & 0xFF);
+/*
     uint32_t a = cpu->A;
 
     if (!(cpu->F & 0x40)) {
@@ -487,4 +520,5 @@ void DAA(gb *cpu) {
     if (a == 0)
         SET_ZFLAG(cpu);
     cpu->A = (BYTE)a;
+	*/
 }
