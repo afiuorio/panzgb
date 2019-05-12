@@ -255,7 +255,20 @@ void CP_8BIT(gb *cpu, BYTE regB) {
 }
 
 void INC_8BIT(gb *cpu, BYTE *reg) {
-    BYTE val = *reg;
+	WORD val = *reg;
+	val++;
+	RESET_NFLAG(cpu);
+	RESET_ZFLAG(cpu);
+	RESET_HFLAG(cpu);
+	if ((val & 0x0F) == 0) {
+		SET_HFLAG(cpu);
+	}
+
+	if ((val & 0xFF) == 0) {
+		SET_ZFLAG(cpu);
+	}
+	*reg = (val & 0xFF);
+    /*WORD val = *reg;
     val++;
     if (((*reg) & 0xF) == 0)
         SET_HFLAG(cpu);
@@ -266,7 +279,7 @@ void INC_8BIT(gb *cpu, BYTE *reg) {
         SET_ZFLAG(cpu);
     else
         RESET_ZFLAG(cpu);
-    *reg = val;
+    *reg = val;*/
 }
 
 void DEC_8BIT(gb *cpu, BYTE *reg) {

@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
     SDL_Surface *surface =
         SDL_CreateRGBSurface(0, 160 * SCALE, 144 * SCALE, 32, 0, 0, 0, 0);
 
-    gameboy = newGameboy(argv[1], 0);
+    gameboy = newGameboy(argv[1], 1);
     if (!gameboy) {
         fprintf(stderr, "Error on memory allocation\n");
         exit(EXIT_FAILURE);
