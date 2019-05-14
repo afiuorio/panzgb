@@ -15,7 +15,7 @@ BYTE executeOpcode(gb *cpu, BYTE opcode) {
     case 0x00:
         return 4;
     case 0x76:
-        cpu->cpuHalted = 0;
+        //cpu->cpuHalted = 0;
         return 4;
     case 0x06:
         GET_BYTE_PC(cpu, val)

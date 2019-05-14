@@ -162,6 +162,8 @@ struct gameboy {
 	WORD currentDstPointer;
 
 	BYTE hasDoneHDMA;
+
+	BYTE RTCMapped;
 };
 
 BYTE readMemory(gb *cpu, WORD addr);

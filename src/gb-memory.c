@@ -41,6 +41,10 @@ BYTE readMemory(gb *cpu, WORD addr) {
     }
 
     else if ((addr >= 0xA000) && (addr <= 0xBFFF)) {
+		if (cpu->RTCMapped == 1) {
+			printf("Trying to read RTC, using stub\n");
+			return 0;
+		}
         WORD t = addr - 0xA000;
         return cpu->RAMBank[t + (cpu->currentRAMBank * 0x2000)];
     }
@@ -77,6 +81,9 @@ void writeMemory(gb *cpu, WORD addr, BYTE data) {
     }
 
     else if ((addr >= 0xA000) && (addr < 0xC000)) {
+		if (cpu->RTCMapped == 1) {
+			printf("Trying to modify RTC, ignoring it...\n");
+		}
         if (cpu->isRAMEnable != 0) {
             WORD t = addr - 0xA000;
             cpu->RAMBank[t + (cpu->currentRAMBank * 0x2000)] = data;

@@ -56,6 +56,7 @@ void initGameBoy(gb *cpu) {
 	cpu->currentInternalWRAMBank = 1;
 	cpu->isHDMAActive = 0;
 	cpu->hasDoneHDMA = 0;
+	cpu->RTCMapped = 0;
 
     setGbBanking(cpu);
 	cpu->currentVideoRamBank = 0;

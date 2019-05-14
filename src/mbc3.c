@@ -21,10 +21,13 @@ void mbc3_changeBank(gb *cpu, WORD addr, BYTE data) {
     }
 
     else if ((addr >= 0x4000) && (addr < 0x6000)) {
-        if (data <= 0x3)
-            cpu->currentRAMBank = data & 0x3;
-		else if (data >= 0x8 && data <= 0x12) {
+		if (data <= 0x3) {
+			cpu->currentRAMBank = data & 0x3;
+			cpu->RTCMapped = 0;
+		}
+		else if (data >= 0x8 && data <= 0xc) {
 			//fprintf(stderr, "Trying to access RTC, ignore...\n");
+			cpu->RTCMapped = 1;
 			return;
 		}
     }
